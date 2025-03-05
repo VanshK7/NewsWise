@@ -1,7 +1,8 @@
 # NewsWise
 
+
+
 UserService 
-```markdown
 # User Service Application
 
 ## Description
@@ -11,6 +12,9 @@ This microservice is responsible for managing user information. It provides func
 ## API Endpoints
 
 The following API endpoints are available for interacting with the User Service:
+
+
+
 
 ### 1. Register a New User
 
@@ -117,4 +121,4 @@ Technology
 * Maven
 
 
-```
+
