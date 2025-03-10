@@ -408,4 +408,92 @@ The application will start on **port `8089`**.
 * **Spring Boot** - Backend framework  
 * **Spring Cloud OpenFeign** - API communication  
 * **Gemini AI / OpenAI API** - AI processing and summarization  
-* **Maven** - Dependency management  
+* **Maven** - Dependency management
+
+
+# Recommendation Service
+
+## Description
+The **Recommendation Service** is a microservice responsible for providing personalized news recommendations to users based on their interests. It interacts with other microservices such as **User Service** and **News Service** to fetch user preferences and relevant news articles. This service is built using **Spring Boot** and utilizes **OpenFeign** for inter-service communication.
+
+## API Endpoints
+The following API endpoints are available for interacting with the Recommendation Service:
+
+### 1. Get Personalized News Feed
+- **Endpoint:** `/recommendations/feed/{userId}`
+- **Method:** `GET`
+- **Path Parameter:**
+  - `{userId}`: The unique identifier of the user (a Long integer).
+- **Example Request:**
+
+  ```sh
+  curl -X GET http://localhost:8090/recommendations/feed/1
+  ```
+
+- **Response Body:**
+
+  ```json
+  [
+    {
+      "title": "AI Advances in Healthcare",
+      "description": "New AI models improving diagnostics...",
+      "content": "Details about AI applications...",
+      "category": "Technology",
+      "bias": "Neutral",
+      "complexExplanation": "AI impact on healthcare explained..."
+    }
+  ]
+  ```
+
+- **Response Codes:**
+  - `200 OK`: Successfully retrieved the news feed.
+  - `404 Not Found`: No matching articles found.
+
+### 2. Get User Preferences
+- **Endpoint:** `/recommendations/feed/pref/{userId}`
+- **Method:** `GET`
+- **Path Parameter:**
+  - `{userId}`: The unique identifier of the user.
+- **Example Request:**
+
+  ```sh
+  curl -X GET http://localhost:8090/recommendations/feed/pref/1
+  ```
+
+- **Response Body:**
+
+  ```json
+  "Technology|AI|Finance"
+  ```
+
+- **Response Codes:**
+  - `200 OK`: Successfully retrieved user preferences.
+  - `404 Not Found`: User preferences not found.
+
+## How to Run the Application
+### Prerequisites:
+- **Java 23** (or a compatible version)
+- **Maven**
+- Other required microservices (**User Service** & **News Service**) running.
+
+### Steps:
+1. **Clone the repository:**
+   ```sh
+   git clone <repository-url>
+   cd recommendation-service
+   ```
+2. **Build the application using Maven:**
+   ```sh
+   mvn clean install
+   ```
+3. **Run the application:**
+   ```sh
+   mvn spring-boot:run
+   ```
+   The application will start on **port 8090**.
+
+## Technologies Used
+- **Spring Boot**
+- **Spring Cloud OpenFeign**
+- **RESTful APIs**
+- **Maven**
