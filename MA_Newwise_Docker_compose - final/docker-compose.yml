@@ -1,0 +1,103 @@
+services:
+  mysql-db:
+    image: mysql:8.0
+    container_name: mysql-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: Dhruvi1505
+      MYSQL_DATABASE: dhruvi
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - dapnetwork
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      retries: 5
+      start_period: 20s
+
+  eureka-server:
+    build: ./Eurerka
+    container_name: eureka-server
+    restart: unless-stopped
+    ports:
+      - "8761:8761"
+    networks:
+      - dapnetwork
+
+  gateway:
+    build: ./gateway
+    container_name: api-gateway
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    depends_on:
+      - eureka-server
+    networks:
+      - dapnetwork
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+
+  userservice:  # ✅ name fixed
+    build: ./user-service
+    container_name: user-service
+    ports:
+      - "8081:8081"
+    depends_on:
+      - eureka-server
+      - mysql-db
+    networks:
+      - dapnetwork
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/dhruvi
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=Dhruvi1505
+      - SPRING_PROFILES_ACTIVE=docker
+
+  newsservice:
+    build: ./NewsSourceApplication
+    container_name: news-service
+    ports:
+      - "9090:9090"
+    depends_on:
+      - eureka-server
+    networks:
+      - dapnetwork
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+
+  contextservice:
+    build: ./context-service
+    container_name: context-service
+    ports:
+      - "8089:8089"
+    depends_on:
+      - eureka-server
+    networks:
+      - dapnetwork
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+
+  recommendationservice:
+    build: ./recommendation
+    container_name: recommendation-service
+    ports:
+      - "8090:8090"
+    depends_on:
+      - eureka-server
+      - userservice  # ✅ fixed to match defined service
+    networks:
+      - dapnetwork
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+
+networks:
+  dapnetwork:
+    driver: bridge
+
+volumes:
+  mysql-data:
+    driver: local
